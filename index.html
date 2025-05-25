@@ -479,12 +479,12 @@
     reportForm.addEventListener('submit', (e) => {
         e.preventDefault();
 
-        const locationType = document.querySelector('input[name="location-type"]:checked')?.value;
-        const location = document.getElementById('location').value;
+        //const locationType = document.querySelector('input[name="location-type"]:checked')?.value;
+        //const location = document.getElementById('location').value;
         const issueType = document.getElementById('issue-type').value;
         const description = document.getElementById('issue-description').value;
 
-        const newReport = { locationType, location, issueType, description };
+        const newReport = { issueType, description };
         let reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
 
         reports.push(newReport);
@@ -514,8 +514,6 @@
             div.style.position = 'relative';
 
             div.innerHTML = `
-                <strong>Location:</strong> ${report.location}<br/>
-                <strong>Type of Location:</strong> ${report.locationType}<br/>
                 <strong>Issue Type:</strong> ${report.issueType}<br/>
                 <strong>Description:</strong> ${report.description}<br/>
                 <button class="delete-btn" style="margin-top: 10px;" data-index="${index}">Delete</button>
@@ -523,8 +521,8 @@
 
             div.addEventListener('click', (e) => {
                 if (e.target.classList.contains('delete-btn')) return; // skip if delete clicked
-                document.querySelector('input[name="location-type"][value="' + report.locationType + '"]').checked = true;
-                document.getElementById('location').value = report.location;
+                //document.querySelector('input[name="location-type"][value="' + report.locationType + '"]').checked = true;
+                //document.getElementById('location').value = report.location;
                 document.getElementById('issue-type').value = report.issueType;
                 document.getElementById('issue-description').value = report.description;
 
