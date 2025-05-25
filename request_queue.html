@@ -1,0 +1,165 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <title>Request Queue - TechCentre Admin</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            background-color: #6EC6E9;
+            margin: 0;
+            padding: 20px;
+        }
+
+        .header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 2px solid #000;
+            padding-bottom: 10px;
+        }
+
+        .header h1 {
+            font-size: 24px;
+            margin: 0;
+        }
+
+        .info-cards {
+            display: flex;
+            justify-content: space-between;
+            margin-top: 20px;
+        }
+
+        .card {
+            background-color: #b3e5fc;
+            border: 2px solid black;
+            border-radius: 10px;
+            padding: 20px;
+            text-align: center;
+            flex: 1;
+            margin: 0 10px;
+        }
+
+        .table-section {
+            margin-top: 30px;
+        }
+
+        table {
+            width: 100%;
+            border-collapse: collapse;
+            background-color: #6EC6E9;
+        }
+
+        th,
+        td {
+            border: 2px solid black;
+            padding: 10px;
+            text-align: center;
+        }
+
+        th {
+            background-color: #b3e5fc;
+        }
+
+        .priority-high {
+            color: red;
+            font-weight: bold;
+        }
+
+        .priority-icon {
+            width: 10px;
+            height: 10px;
+            background-color: red;
+            display: inline-block;
+            margin-right: 5px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="header">
+        <div>
+            <div style="font-weight: bold;">👤 ADMIN'S NAME</div>
+            <h1>TechCentre Admin</h1>
+        </div>
+        <div style="font-weight: bold;">Date and time: <span id="datetime"></span></div>
+    </div>
+
+    <div class="info-cards">
+        <div class="card">Total Issue<br>Today</div>
+        <div class="card">AVERAGE<br>RESOLUTION<br>TIME</div>
+        <div class="card">ISSUES<br>RESOLVED</div>
+        <div class="card">ESCALATED<br>ISSUES</div>
+    </div>
+
+    <div class="table-section">
+        <table>
+            <thead>
+                <tr>
+                    <th>Issue ID</th>
+                    <th>Priority</th>
+                    <th>Location</th>
+                    <th>Assigned To</th>
+                    <th>Status</th>
+                    <th>Action</th>
+                </tr>
+            </thead>
+            <tbody id="report-table-body">
+                <!-- Populated by JavaScript -->
+            </tbody>
+        </table>
+    </div>
+
+    <script>
+        // Display date and time
+        document.getElementById('datetime').textContent = new Date().toLocaleString();
+
+        // Get report data from sessionStorage
+        const data = JSON.parse(sessionStorage.getItem('latestReport') || '{}');
+
+        // Generate a sample row if data is present
+        if (Object.keys(data).length > 0) {
+            const tbody = document.getElementById('report-table-body');
+            const row = document.createElement('tr');
+
+            const issueID = `LAB${Math.floor(Math.random() * 900 + 100)}`;
+            const priorityCell = `<span class="priority-icon"></span><span class="priority-high">HIGH</span>`;
+
+            row.innerHTML = `
+        <td>${issueID}</td>
+        <td>${priorityCell}</td>
+        <td>${data.location || 'N/A'}</td>
+        <td>ROUNDER2</td>
+        <td>IN PROGRESS</td>
+        <td>▼</td>
+      `;
+            tbody.appendChild(row);
+
+            window.addEventListener('DOMContentLoaded', () => {
+                const table = document.getElementById('requestTableBody'); // tbody for dynamic rows
+                const reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+
+                reports.forEach((report, index) => {
+                    const row = document.createElement('tr');
+
+                    row.innerHTML = `
+            <td>${index + 1}</td>
+            <td>${report.name}</td>
+            <td>${report.telephone}</td>
+            <td>${report.locationType} - ${report.location}</td>
+            <td>${report.issueType}</td>
+            <td>${report.description}</td>
+            <td>${report.priority}</td>
+            <td>${report.status}</td>
+        `;
+
+                    table.appendChild(row);
+                });
+            });
+
+        }
+    </script>
+</body>
+
+</html>

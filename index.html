@@ -320,6 +320,13 @@
             </div>
         </div>
         
+        <a href="request_queue.html">
+          <button style="padding: 10px 20px; background-color: #007acc; color: white; border: none; border-radius: 5px; font-size: 16px; cursor: pointer;">
+            View Request Queue
+          </button>
+        </a>
+
+        
         <div class="nav-item">
             <i class="fas fa-sign-out-alt"></i>
             <span>Logout</span>
@@ -477,70 +484,74 @@
     const savedReportsList = document.getElementById('savedReportsList');
 
     reportForm.addEventListener('submit', (e) => {
-        e.preventDefault();
+    e.preventDefault();
+    const name = encodeURIComponent(document.getElementById('name').value);
+    const telephone = encodeURIComponent(document.getElementById('telephone').value);
+    const locationType = encodeURIComponent(document.querySelector('input[name="location-type"]:checked').value);
+    const location = encodeURIComponent(document.getElementById('location').value);
+    const issueType = encodeURIComponent(document.getElementById('issue-type').value);
+    const description = encodeURIComponent(document.getElementById('issue-description').value);
 
-        //const locationType = document.querySelector('input[name="location-type"]:checked')?.value;
-        //const location = document.getElementById('location').value;
-        const issueType = document.getElementById('issue-type').value;
-        const description = document.getElementById('issue-description').value;
-
-        const newReport = { issueType, description };
-        let reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
-
-        reports.push(newReport);
-        localStorage.setItem('savedReports', JSON.stringify(reports));
-
-        reportForm.reset();
-        loadReports();
+    // Save the report to localStorage
+    let reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
+    reports.push({
+        name: decodeURIComponent(name),
+        telephone: decodeURIComponent(telephone),
+        locationType: decodeURIComponent(locationType),
+        location: decodeURIComponent(location),
+        issueType: decodeURIComponent(issueType),
+        description: decodeURIComponent(description),
+        status: 'PENDING',
+        priority: 'HIGH' // or dynamic
     });
+    localStorage.setItem('savedReports', JSON.stringify(reports));
+
+    // Show success message or reset form
+    alert("Report submitted successfully!");
+    reportForm.reset();
+    });
+
+
 
     function loadReports() {
         savedReportsList.innerHTML = '';
         let reports = JSON.parse(localStorage.getItem('savedReports') || '[]');
-
+        
         if (reports.length === 0) {
-            savedReportsList.innerHTML = '<p>No saved reports yet.</p>';
+            savedReportsList.innerHTML = '<p style="color: var(--dark-gray);">No reports found.</p>';
             return;
         }
-
+    
         reports.forEach((report, index) => {
-            const div = document.createElement('div');
-            div.style.border = '1px solid var(--secondary-color)';
-            div.style.padding = '10px';
-            div.style.marginBottom = '10px';
-            div.style.borderRadius = '5px';
-            div.style.backgroundColor = 'rgba(76, 201, 240, 0.1)';
-            div.style.color = 'var(--text-color)';
-            div.style.position = 'relative';
-
-            div.innerHTML = `
-                <strong>Issue Type:</strong> ${report.issueType}<br/>
-                <strong>Description:</strong> ${report.description}<br/>
-                <button class="delete-btn" style="margin-top: 10px;" data-index="${index}">Delete</button>
+            const reportItem = document.createElement('div');
+            reportItem.style.padding = '15px';
+            reportItem.style.border = '1px solid rgba(255,255,255,0.1)';
+            reportItem.style.borderRadius = '5px';
+            reportItem.style.marginBottom = '10px';
+            reportItem.style.backgroundColor = 'rgba(255,255,255,0.02)';
+            reportItem.style.cursor = 'pointer';
+        
+            reportItem.innerHTML = `
+                <p><strong>Issue:</strong> ${report.issueType}</p>
+                <p><strong>Description:</strong> ${report.description}</p>
+                <p><strong>Status:</strong> <span style="color: gold;">${report.status}</span></p>
+                <p><strong>Priority:</strong> <span style="color: red;">${report.priority}</span></p>
             `;
-
-            div.addEventListener('click', (e) => {
-                if (e.target.classList.contains('delete-btn')) return; // skip if delete clicked
-                //document.querySelector('input[name="location-type"][value="' + report.locationType + '"]').checked = true;
-                //document.getElementById('location').value = report.location;
-                document.getElementById('issue-type').value = report.issueType;
-                document.getElementById('issue-description').value = report.description;
-
-                reports.splice(index, 1);
-                localStorage.setItem('savedReports', JSON.stringify(reports));
-                loadReports();
+        
+            reportItem.addEventListener('click', () => {
+                populateForm(report);
             });
-
-            div.querySelector('.delete-btn').addEventListener('click', (e) => {
-                e.stopPropagation();
-                reports.splice(index, 1);
-                localStorage.setItem('savedReports', JSON.stringify(reports));
-                loadReports();
-            });
-
-            savedReportsList.appendChild(div);
+        
+            savedReportsList.appendChild(reportItem);
         });
     }
+
+
+    function populateForm(report) {
+    document.getElementById('issue-type').value = report.issueType || '';
+    document.getElementById('issue-description').value = report.description || '';
+    }
+
 </script>
 
 </body>
